@@ -21,10 +21,15 @@ body {
   position: absolute;
   text-align: center;
   display: none;
+  width: 100%;
+  height: 100%;
 }
 
 .active {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .moving {
@@ -56,6 +61,12 @@ body {
   50% {transform: translateY(-20px);}
 }
 
+.box {
+  font-size: 60px;
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+
 .shake {
   animation: shake 0.4s;
 }
@@ -68,22 +79,67 @@ body {
   100% {transform: translateX(0);}
 }
 
-.heart {
-  position: absolute;
-  bottom: 0;
-  font-size: 20px;
-  animation: floatUp 4s linear infinite;
+.falling-box {
+  position: fixed;
+  font-size: 40px;
+  pointer-events: none;
+  animation: fall 3s ease-in forwards;
+  z-index: 10;
 }
 
-@keyframes floatUp {
-  from {transform: translateY(0);}
-  to {transform: translateY(-100vh);}
+@keyframes fall {
+  0% {
+    top: -50px;
+    opacity: 1;
+    transform: rotateZ(0deg);
+  }
+  100% {
+    top: 100vh;
+    opacity: 0;
+    transform: rotateZ(360deg);
+  }
+}
+
+.final-content {
+  opacity: 0;
+  transition: opacity 1s ease-in;
+  text-align: center;
+}
+
+.final-content.show {
+  opacity: 1;
+}
+
+.final-content h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.final-content .quote {
+  font-size: 20px;
+  font-style: italic;
+  margin-bottom: 30px;
+  color: #ccc;
 }
 
 img {
   width: 250px;
-  margin-top: 20px;
   border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  animation: scaleIn 0.6s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 p {
@@ -121,9 +177,11 @@ p {
 
 <!-- FINAL -->
 <div class="screen" id="s5">
-  <h2>Suhani sent you a box</h2>
-  <p>have a nice day thank you</p>
-  <img src="11e267f0c9ffc9aac2cdc321b9ada3cf.jpg">
+  <div class="final-content">
+    <h2>Suhani sent you a box</h2>
+    <p class="quote">Have a nice day, thank you</p>
+    <img src="11e267f0c9ffc9aac2cdc321b9ada3cf.jpg">
+  </div>
 </div>
 
 <script>
@@ -142,7 +200,7 @@ function getRandomPosition() {
 }
 
 function emojiClick(el, nextScreen) {
-  if (isMoving) return; // Prevent clicking while moving  
+  if (isMoving) return;
   
   isMoving = true;
   
@@ -173,20 +231,37 @@ function goToNext(screenNum) {
 
 function openbox(el) {
   el.classList.add("shake");
+  el.style.cursor = "not-allowed";
+  el.onclick = null;
 
-  // create floating hearts
-  for (let i = 0; i < 20; i++) {
-    let heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerHTML = "📦";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.animationDuration = (2 + Math.random() * 3) + "s";
-    document.body.appendChild(heart);
+  // Create many falling boxes
+  const boxCount = 50;
+  for (let i = 0; i < boxCount; i++) {
+    setTimeout(() => {
+      let fallingBox = document.createElement("div");
+      fallingBox.className = "falling-box";
+      fallingBox.innerHTML = "📦";
+      fallingBox.style.left = Math.random() * window.innerWidth + "px";
+      fallingBox.style.animationDuration = (2 + Math.random() * 2) + "s";
+      fallingBox.style.animationDelay = (Math.random() * 0.5) + "s";
+      document.body.appendChild(fallingBox);
+
+      // Remove element after animation
+      setTimeout(() => {
+        fallingBox.remove();
+      }, (2 + Math.random() * 2) * 1000 + 500);
+    }, i * 40);
   }
 
+  // Show final content after boxes finish falling
   setTimeout(() => {
     next(5);
-  }, 800);
+    // Show final content with fade-in
+    setTimeout(() => {
+      const finalContent = document.querySelector('.final-content');
+      finalContent.classList.add('show');
+    }, 100);
+  }, 4000);
 }
 
 // Center emojis on screen load
