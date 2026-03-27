@@ -1,16 +1,24 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Video</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Title</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .box {
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+        }
+    </style>
 </head>
-
-<body style="margin:0; background:black; display:flex; justify-content:center; align-items:center; height:100vh;">
-
-<video controls style="width:100%;">
-  <source src="./VID_20260327_143937_1.mp4" type="video/mp4">
-</video>
-
+<body>
+    <div class="box" role="button" tabindex="0">Box Item 1</div>
+    <div class="box" role="button" tabindex="0">Box Item 2</div>
+    <div class="box" role="button" tabindex="0">Box Item 3</div>
+    <script src="script.js"></script>
 </body>
 </html>
